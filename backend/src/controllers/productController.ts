@@ -56,23 +56,39 @@ export const createProduct = async (req: Request, res: Response) => {
   try {
     const { name, description, price, stock } = req.body;
 
+    console.log('Creating product with data:', { name, description, price, stock });
+
     // Validation
     if (!name || !description || price === undefined || stock === undefined) {
       return res.status(400).json({ message: 'Please provide name, description, price and stock' });
     }
 
-    if (typeof price !== 'number' || price < 0) {
+    // Convert to numbers if they're strings
+    const parsedPrice = typeof price === 'string' ? parseFloat(price) : Number(price);
+    const parsedStock = typeof stock === 'string' ? parseInt(stock, 10) : Number(stock);
+
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
       return res.status(400).json({ message: 'Price must be a number greater than or equal to 0' });
     }
 
-    if (typeof stock !== 'number' || stock < 0) {
+    if (isNaN(parsedStock) || parsedStock < 0) {
       return res.status(400).json({ message: 'Stock must be a number greater than or equal to 0' });
     }
 
-    const product = new Product({ name, description, price, stock });
+    const product = new Product({ 
+      name, 
+      description, 
+      price: parsedPrice, 
+      stock: parsedStock 
+    });
+    
+    console.log('Saving product to database...');
     const createdProduct = await product.save();
+    console.log('Product saved successfully:', createdProduct._id);
+    
     res.status(201).json(createdProduct);
   } catch (error) {
+    console.error('Error creating product:', error);
     res.status(400).json({ message: (error as Error).message });
   }
 };
