@@ -26,7 +26,11 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Middleware
-app.use(cors({ origin: process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : '*' }));
+app.use(cors({ 
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL || 'https://emerald-weld.vercel.app', 'https://emerald-git-main-jabir-mahmuds-projects.vercel.app']
+    : '*' 
+}));
 app.use(express.json());
 
 // Routes
