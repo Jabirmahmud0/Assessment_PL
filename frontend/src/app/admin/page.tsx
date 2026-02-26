@@ -17,6 +17,8 @@ export default function AdminPage() {
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editForm, setEditForm] = useState({ name: '', price: 0, stock: 0 });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', description: '', price: 0, stock: 0 });
 
   const startEdit = (p: Product) => {
     setEditingProduct(p);
@@ -89,6 +91,22 @@ export default function AdminPage() {
       fetchData();
     } catch (err: any) {
       addToast(err.response?.data?.message || 'Failed to update product', 'error');
+    }
+  };
+
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      console.log('Adding product:', addForm);
+      const { data } = await api.post('/products', addForm);
+      console.log('Product added:', data);
+      addToast('Product added successfully', 'success');
+      setShowAddModal(false);
+      setAddForm({ name: '', description: '', price: 0, stock: 0 });
+      fetchData();
+    } catch (err: any) {
+      console.error('Add product error:', err.response?.data || err);
+      addToast(err.response?.data?.message || 'Failed to add product', 'error');
     }
   };
 
@@ -198,30 +216,41 @@ export default function AdminPage() {
           )}
 
           {activeTab === 'products' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="border-b border-emerald-500/10">
-                    <th className="pb-4">Name</th>
-                    <th className="pb-4">Price</th>
-                    <th className="pb-4">Stock</th>
-                    <th className="pb-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(p => (
-                    <tr key={p._id} className="border-b border-emerald-500/5 last:border-0">
-                      <td className="py-4">{p.name}</td>
-                      <td className="py-4">${p.price}</td>
-                      <td className="py-4">{p.stock}</td>
-                      <td className="py-4">
-                        <button onClick={() => startEdit(p)} className="text-emerald-600 mr-4 font-semibold hover:underline">Edit</button>
-                        <button onClick={() => handleDeleteProduct(p._id)} className="text-red-500 font-semibold hover:underline">Delete</button>
-                      </td>
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold">Product Management</h3>
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30 flex items-center gap-2"
+                >
+                  <span>➕</span> Add Product
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-emerald-500/10">
+                      <th className="pb-4">Name</th>
+                      <th className="pb-4">Price</th>
+                      <th className="pb-4">Stock</th>
+                      <th className="pb-4">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {products.map(p => (
+                      <tr key={p._id} className="border-b border-emerald-500/5 last:border-0">
+                        <td className="py-4">{p.name}</td>
+                        <td className="py-4">${p.price}</td>
+                        <td className="py-4">{p.stock}</td>
+                        <td className="py-4">
+                          <button onClick={() => startEdit(p)} className="text-emerald-600 mr-4 font-semibold hover:underline">Edit</button>
+                          <button onClick={() => handleDeleteProduct(p._id)} className="text-red-500 font-semibold hover:underline">Delete</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 
@@ -346,6 +375,71 @@ export default function AdminPage() {
               <div className="flex gap-4 pt-6">
                 <button type="button" onClick={() => setEditingProduct(null)} className="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">Cancel</button>
                 <button type="submit" className="flex-1 py-3 px-4 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAddModal(false)}></div>
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 w-full max-w-md shadow-2xl relative z-10 animate-fade-in">
+            <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
+            <form onSubmit={handleAddProduct} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2">Product Name</label>
+                <input
+                  type="text"
+                  value={addForm.name}
+                  onChange={e => setAddForm({ ...addForm, name: e.target.value })}
+                  className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                  placeholder="e.g., Premium Watch"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2">Description</label>
+                <textarea
+                  value={addForm.description}
+                  onChange={e => setAddForm({ ...addForm, description: e.target.value })}
+                  className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                  placeholder="Describe the product..."
+                  rows={3}
+                  required
+                />
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-semibold mb-2">Price ($)</label>
+                  <input
+                    type="number"
+                    value={addForm.price}
+                    onChange={e => setAddForm({ ...addForm, price: Number(e.target.value) })}
+                    className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                    min="0"
+                    step="0.01"
+                    placeholder="99.99"
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-semibold mb-2">Stock Quantity</label>
+                  <input
+                    type="number"
+                    value={addForm.stock}
+                    onChange={e => setAddForm({ ...addForm, stock: Number(e.target.value) })}
+                    className="w-full px-4 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-medium"
+                    min="0"
+                    placeholder="50"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-6">
+                <button type="button" onClick={() => setShowAddModal(false)} className="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">Cancel</button>
+                <button type="submit" className="flex-1 py-3 px-4 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30">Add Product</button>
               </div>
             </form>
           </div>
