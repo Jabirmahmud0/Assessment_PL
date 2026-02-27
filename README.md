@@ -59,7 +59,7 @@ A full-stack e-commerce system built with Next.js, Node.js/Express, and MongoDB.
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS |
 | Backend | Node.js, Express.js, TypeScript |
 | Database | MongoDB with Mongoose |
 | Auth | JWT + bcrypt + Firebase Google OAuth |

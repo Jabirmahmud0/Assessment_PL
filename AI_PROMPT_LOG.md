@@ -44,13 +44,13 @@ This file documents all development prompts and their results during the creatio
 
 ### Phase 3: Testing & Docker
 
-**Prompt:** "Write backend tests for authentication, products, and orders using Jest, Supertest, and mongodb-memory-server. Create a multi-stage Dockerfile for the backend."
+**Prompt:** "Write backend tests for authentication, products, and orders using Jest, Supertest, and mongodb-memory-server. Use MongoMemoryReplSet instead of MongoMemoryServer since order tests require Mongoose transactions which need a replica set. Create a multi-stage Dockerfile for the backend."
 
 **Result:** Created test files:
 - `auth.test.ts` - register/login validation tests
-- `product.test.ts` - CRUD with auth guards
+- `product.test.ts` - CRUD with auth guards (admin 201, user 403, no token 401)
 - `order.test.ts` - atomic transactions, stock deduction, cart clearing
-- `setup.ts` - in-memory MongoDB configuration
+- `setup.ts` - in-memory MongoDB replica set configuration
 
 Dockerfile configured with multi-stage build for production optimization.
 
@@ -58,16 +58,17 @@ Dockerfile configured with multi-stage build for production optimization.
 
 ### Phase 4: Frontend Pages
 
-**Prompt:** "Develop the frontend pages for login, product listing, shopping cart, homepage, and admin dashboard."
+**Prompt:** "Develop the frontend pages for login, product listing, shopping cart, homepage, and admin dashboard. Also create register, product detail, and profile pages."
 
 **Result:** Implemented all pages:
 - `login/page.tsx` - Email/password + Google OAuth login
 - `register/page.tsx` - User registration with validation
-- `products/page.tsx` - Product listing with search, filter, sort, pagination
-- `products/[id]/page.tsx` - Product detail page
-- `cart/page.tsx` - Shopping cart with quantity management
+- `products/page.tsx` - Product listing with search, filter, sort, pagination (400ms debounce)
+- `products/[id]/page.tsx` - Product detail page with quantity selector capped to stock
+- `cart/page.tsx` - Shopping cart with quantity management and order placement
 - `page.tsx` - Homepage with hero section and featured products
-- `admin/page.tsx` - Admin dashboard with reports and management
+- `profile/page.tsx` - User profile with order history
+- `admin/page.tsx` - Admin dashboard with reports, products, orders, users tabs
 
 ---
 
@@ -83,17 +84,13 @@ Dockerfile configured with multi-stage build for production optimization.
 
 **Prompt:** "Fix Google login 500 error - 'next is not a function' in User model pre-save hook."
 
-**Result:** Fixed Mongoose middleware bug - removed `next()` callback from async `pre('save')` hook. Also removed manual bcrypt hashing in `googleLogin` controller since the model hook handles it.
-
-**Prompt:** "Create .env file for backend - it's missing."
-
-**Result:** Created `backend/.env` with MongoDB connection, JWT secret, and port configuration.
+**Result:** Fixed Mongoose middleware bug - removed `next()` callback from async `pre('save')` hook. Also removed manual bcrypt hashing in `googleLogin` controller since the model hook handles it automatically.
 
 ---
 
 ### Phase 6: Authentication State Management
 
-**Prompt:** "After login, navbar still shows login button. Fix authentication state management."
+**Prompt:** "After login, navbar still shows login button. Fix authentication state management using React Context."
 
 **Result:** Created `AuthContext.tsx` for global auth state management. Updated:
 - `layout.tsx` - Wrapped app with AuthProvider
@@ -122,27 +119,19 @@ Dockerfile configured with multi-stage build for production optimization.
 - Auto-updates via custom event system when cart changes
 - Links to cart page
 
-**Prompt:** "Remove 'Create Account' button from homepage hero for logged-in users."
-
-**Result:** Simplified hero section to single "Shop Now" button for all users.
-
 ---
 
 ### Phase 8: Database & Security
 
-**Prompt:** "Use MongoDB Atlas connection string and seed admin user to cloud database."
+**Prompt:** "Use MongoDB Atlas connection string and create a seed script for sample admin user and products."
 
-**Result:** Updated `backend/.env` with MongoDB Atlas connection. Created `seed.ts` script to create admin user:
-- Email: `admin@example.com`
-- Password: `password123`
+**Result:** Updated `backend/.env` with MongoDB Atlas connection. Created `seed.ts` script to create admin user and sample products:
+- Admin email: `admin@example.com`
+- Admin password: `password123`
 
-**Prompt:** "Generate secure JWT_SECRET and update .env file."
+**Prompt:** "Move Firebase credentials out of firebase.ts into environment variables."
 
-**Result:** Generated 256-character cryptographically secure JWT secret using Node.js crypto module.
-
-**Prompt:** "Remove real Firebase credentials from .env.local.example and use placeholders."
-
-**Result:** Replaced actual Firebase keys with placeholders in example file. Real credentials remain in `.env.local` (gitignored).
+**Result:** Updated `firebase.ts` to read from `process.env.NEXT_PUBLIC_FIREBASE_*` variables. Added all Firebase keys to `.env.local` and `.env.local.example` with placeholders.
 
 ---
 
@@ -169,7 +158,7 @@ ecommerce-assessment/
 │   │   ├── routes/          # API route definitions
 │   │   ├── config/          # Database connection
 │   │   ├── server.ts        # Express app entry
-│   │   └── seed.ts          # Admin user seeder
+│   │   └── seed.ts          # Admin user + products seeder
 │   ├── tests/               # Jest + Supertest + mongodb-memory-server
 │   ├── .env                 # Environment variables (gitignored)
 │   ├── .env.example         # Template
@@ -179,8 +168,8 @@ ecommerce-assessment/
 │   ├── src/
 │   │   ├── app/             # Next.js App Router pages
 │   │   ├── components/      # Reusable UI (Navbar, ProductCard, etc.)
-│   │   ├── context/         # AuthContext, ThemeContext
-│   │   ├── lib/             # API client, Firebase config
+│   │   ├── context/         # AuthContext, ThemeContext, ToastContext
+│   │   ├── lib/             # API client (Axios), Firebase config
 │   │   └── types/           # TypeScript interfaces
 │   ├── .env.local           # Environment variables (gitignored)
 │   ├── .env.local.example   # Template with placeholders
@@ -197,48 +186,46 @@ ecommerce-assessment/
 
 | Decision | Rationale |
 |----------|-----------|
-| Mongoose pre-save hook for password hashing | DRY principle - single source of truth |
-| Async/await without next() in middleware | Mongoose v5+ best practice |
+| Mongoose pre-save hook for password hashing | DRY principle - single source of truth for hashing logic |
+| Async pre-save hook without next() | Mongoose v6+ best practice for async middleware |
+| MongoMemoryReplSet for tests | Transactions require a replica set, standalone MongoDB does not support them |
 | AuthContext for global state | React best practice, avoids prop drilling |
-| Custom event for cart updates | Cross-component communication without context |
-| MongoDB transactions for orders | Atomic stock deduction + order creation |
-| Role hardcoded to 'user' in register | Security - prevents privilege escalation |
-| JWT in localStorage | Simplicity for this assessment scope |
-| Firebase for Google OAuth | Industry standard, reduces custom auth complexity |
+| Custom event for cart badge updates | Cross-component communication without adding cart to global context |
+| MongoDB transactions for orders | Atomic stock deduction + order creation + cart clearing |
+| Role hardcoded to 'user' in register | Security - prevents privilege escalation via request body |
+| JWT in localStorage | Appropriate simplicity for this assessment scope |
+| Firebase for Google OAuth | Industry standard, reduces custom OAuth implementation complexity |
+| Helmet + rate limiting in server | Security baseline - HTTP headers and DoS protection |
 
 ---
 
 ## Testing Coverage
 
 - **Auth:** Registration validation, duplicate email, login success/failure
-- **Products:** CRUD operations, admin/user/no-token authorization
-- **Orders:** Successful placement, stock deduction, insufficient stock error, cart clearing
+- **Products:** CRUD operations, admin/user/no-token authorization (201/403/401)
+- **Orders:** Successful placement, stock deduction verification, insufficient stock error, cart clearing confirmed
 - **Cart:** Add items, quantity merge, remove items, stock ceiling enforcement
 
 ---
 
 ## Security Measures Implemented
 
-1. Password hashing with bcrypt (salt rounds: 10)
+1. Password hashing with bcrypt (salt rounds: 10, via pre-save hook)
 2. JWT token authentication with 30-day expiration
-3. Role-based access control middleware
-4. Input validation on all auth endpoints
-5. User role hardcoded to prevent escalation
-6. Environment variables for secrets (never committed)
-7. CORS configured for frontend origin
-8. MongoDB connection string in .env only
+3. Role-based access control (authMiddleware + adminMiddleware chained)
+4. Input validation on all endpoints accepting request body
+5. User role hardcoded in register to prevent privilege escalation
+6. Environment variables for all secrets (never committed)
+7. CORS configured for frontend origin in production
+8. Helmet middleware for secure HTTP headers
+9. Rate limiting: 100 requests per 10 minutes per IP
 
 ---
 
-## AI-Assisted Development Summary
+## AI Tools Used
 
-This project was built using AI-assisted development (vibe coding) as permitted by the assessment guidelines. AI tools helped with:
+- **Claude (claude.ai)** — Architecture planning, transaction logic, MongoDB aggregation pipeline, security review, documentation
+- **Antigravity AI IDE** — Code generation, editing, and real-time debugging throughout development
+- **Qwen Code** — Code completion, refactoring suggestions, and frontend component generation
 
-- **Code generation:** Boilerplate, controllers, components
-- **Debugging:** Identifying and fixing the Mongoose middleware bug
-- **Architecture:** Database schema design, transaction logic
-- **Best practices:** TypeScript types, error handling, security patterns
-- **Documentation:** README, API docs, prompt logging
-
-All code was reviewed, tested, and validated by the developer before commit.
-
+All code was reviewed, understood, and validated by the developer before commit.
