@@ -83,42 +83,42 @@ export default function ProfilePage() {
   const pendingOrders = orders.filter(o => o.status === 'pending').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
       {updateMessage && (
-        <div className={`fixed top-24 right-8 px-6 py-3 rounded-xl shadow-lg transform transition-all z-50 font-medium ${updateMessage.includes('Failed') ? 'bg-red-500/90 text-white' : 'bg-emerald-500/90 text-white'}`}>
+        <div className={`fixed top-20 sm:top-24 right-4 sm:right-8 px-4 sm:px-6 py-3 rounded-xl shadow-lg transform transition-all z-50 font-medium text-sm sm:text-base ${updateMessage.includes('Failed') ? 'bg-red-500/90 text-white' : 'bg-emerald-500/90 text-white'}`}>
           {updateMessage}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
         {/* Sidebar / Profile Card */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="glossy-card p-8 text-center relative overflow-hidden group">
+          <div className="glossy-card p-6 sm:p-8 text-center relative overflow-hidden group">
             <div className="absolute inset-0 bg-emerald-gradient opacity-10 group-hover:opacity-20 transition-opacity duration-500"></div>
 
             <div className="relative">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-full flex items-center justify-center text-5xl text-white font-bold shadow-xl shadow-emerald-500/20 mb-6 ring-4 ring-white dark:ring-gray-800">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-full flex items-center justify-center text-4xl sm:text-5xl text-white font-bold shadow-xl shadow-emerald-500/20 mb-4 sm:mb-6 ring-4 ring-white dark:ring-gray-800">
                 {user?.name.charAt(0).toUpperCase()}
               </div>
 
-              <h1 className="text-2xl font-bold mb-1">{user?.name}</h1>
-              <p className="text-gray-500 text-sm mb-4">{user?.email}</p>
+              <h1 className="text-xl sm:text-2xl font-bold mb-1 break-words">{user?.name}</h1>
+              <p className="text-gray-500 text-xs sm:text-sm mb-4 break-all">{user?.email}</p>
 
-              <div className="inline-flex m-1 px-4 py-1.5 bg-emerald-500/10 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex m-1 px-3 sm:px-4 py-1.5 bg-emerald-500/10 text-emerald-600 rounded-full text-xs font-bold uppercase tracking-wider">
                 {user?.role} Role
               </div>
             </div>
 
-            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between gap-4">
+            <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl text-sm font-semibold transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
               >
                 {isEditing ? 'Cancel Edit' : 'Edit Profile'}
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 px-4 py-2 bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white rounded-xl text-sm font-semibold transition-colors"
+                className="w-full sm:flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white rounded-xl text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
               >
                 Logout
               </button>
@@ -126,63 +126,63 @@ export default function ProfilePage() {
           </div>
 
           {/* Dynamic Stats Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="glossy-card p-4 text-center">
-              <p className="text-xs text-gray-500 font-bold uppercase mb-1">Total Spent</p>
-              <p className="text-2xl font-black text-emerald-600">${totalSpent.toFixed(2)}</p>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="glossy-card p-3 sm:p-4 text-center">
+              <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Total Spent</p>
+              <p className="text-xl sm:text-2xl font-black text-emerald-600 break-all">${totalSpent.toFixed(2)}</p>
             </div>
-            <div className="glossy-card p-4 text-center">
-              <p className="text-xs text-gray-500 font-bold uppercase mb-1">Orders</p>
-              <p className="text-2xl font-black">{orders.length}</p>
+            <div className="glossy-card p-3 sm:p-4 text-center">
+              <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Orders</p>
+              <p className="text-xl sm:text-2xl font-black">{orders.length}</p>
             </div>
-            <div className="glossy-card p-4 text-center">
-              <p className="text-xs text-gray-500 font-bold uppercase mb-1">Completed</p>
-              <p className="text-2xl font-black text-green-500">{completedOrders}</p>
+            <div className="glossy-card p-3 sm:p-4 text-center">
+              <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Completed</p>
+              <p className="text-xl sm:text-2xl font-black text-green-500">{completedOrders}</p>
             </div>
-            <div className="glossy-card p-4 text-center">
-              <p className="text-xs text-gray-500 font-bold uppercase mb-1">Pending</p>
-              <p className="text-2xl font-black text-yellow-500">{pendingOrders}</p>
+            <div className="glossy-card p-3 sm:p-4 text-center">
+              <p className="text-[10px] sm:text-xs text-gray-500 font-bold uppercase mb-1">Pending</p>
+              <p className="text-xl sm:text-2xl font-black text-yellow-500">{pendingOrders}</p>
             </div>
           </div>
         </div>
 
         {/* Main Content Area */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="lg:col-span-3 space-y-6 sm:space-y-8">
 
           {/* Edit Profile Form */}
           {isEditing && (
-            <div className="glossy-card p-8 animate-fade-in border-2 border-emerald-500/20">
-              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <span className="text-emerald-500">⚙️</span> Profile Settings
+            <div className="glossy-card p-6 sm:p-8 animate-fade-in border-2 border-emerald-500/20">
+              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
+                <span className="text-emerald-500 text-xl sm:text-2xl">⚙️</span> <span className="break-words">Profile Settings</span>
               </h2>
               <form onSubmit={handleUpdateProfile} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
                     <input
                       type="text"
                       required
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm sm:text-base"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
                     <input
                       type="email"
                       required
                       value={editEmail}
                       onChange={(e) => setEditEmail(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-sm sm:text-base"
                     />
                   </div>
                 </div>
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-2 sm:pt-4">
                   <button
                     type="submit"
                     disabled={updateLoading}
-                    className="btn-emerald px-8 py-3 w-full md:w-auto text-sm"
+                    className="btn-emerald px-6 sm:px-8 py-2.5 sm:py-3 w-full sm:w-auto text-xs sm:text-sm"
                   >
                     {updateLoading ? 'Saving changes...' : 'Save Changes'}
                   </button>
@@ -192,60 +192,60 @@ export default function ProfilePage() {
           )}
 
           {/* Orders Section */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold flex items-center gap-3">
-              <span className="p-2 bg-emerald-500/10 rounded-lg text-emerald-600">🛍️</span>
-              Order History
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
+              <span className="p-2 bg-emerald-500/10 rounded-lg text-emerald-600 text-xl sm:text-2xl">🛍️</span>
+              <span className="break-words">Order History</span>
             </h2>
           </div>
 
           {orders.length === 0 ? (
-            <div className="glossy-card p-16 text-center border-dashed border-2">
-              <div className="text-6xl mb-4">🛒</div>
-              <h3 className="text-xl font-bold mb-2">No orders yet</h3>
-              <p className="text-gray-500 mb-6">Looks like you haven't made your first purchase.</p>
-              <button onClick={() => router.push('/products')} className="btn-emerald px-8 font-medium">
+            <div className="glossy-card p-8 sm:p-12 lg:p-16 text-center border-dashed border-2">
+              <div className="text-5xl sm:text-6xl mb-4">🛒</div>
+              <h3 className="text-lg sm:text-xl font-bold mb-2">No orders yet</h3>
+              <p className="text-gray-500 text-xs sm:text-sm mb-4 sm:mb-6">Looks like you haven't made your first purchase.</p>
+              <button onClick={() => router.push('/products')} className="btn-emerald px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-medium text-xs sm:text-sm">
                 Start Shopping
               </button>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {orders.map((order) => (
                 <div key={order._id} className="glossy-card overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-                  <div className="p-6 sm:p-8 bg-gray-50/50 dark:bg-gray-800/20 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner ${order.status === 'completed' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
-                          order.status === 'cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
-                            'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
+                  <div className="p-4 sm:p-6 lg:p-8 bg-gray-50/50 dark:bg-gray-800/20 border-b border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-lg sm:text-xl shadow-inner flex-shrink-0 ${order.status === 'completed' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                        order.status === 'cancelled' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
+                          'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
                         }`}>
                         {order.status === 'completed' ? '✓' : order.status === 'cancelled' ? '✕' : '⏳'}
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Order #{order._id.slice(-8)}</p>
-                        <p className="text-sm font-medium">{new Date(order.createdAt).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold tracking-wider mb-1 truncate">Order #{order._id.slice(-8)}</p>
+                        <p className="text-xs sm:text-sm font-medium truncate">{new Date(order.createdAt).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-0 border-gray-100 dark:border-gray-800">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between sm:justify-end gap-2 sm:gap-6 sm:w-auto w-full mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-gray-100 dark:border-gray-800">
                       <div>
-                        <p className="text-xs text-gray-500 uppercase font-bold text-right mb-1">Total</p>
-                        <p className="font-black text-xl text-emerald-600 dark:text-emerald-400">${order.totalAmount.toFixed(2)}</p>
+                        <p className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold sm:text-right mb-1">Total</p>
+                        <p className="font-black text-lg sm:text-xl text-emerald-600 dark:text-emerald-400">${order.totalAmount.toFixed(2)}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 sm:p-8">
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Ordered Items</h4>
-                    <div className="space-y-3">
+                  <div className="p-4 sm:p-6 lg:p-8">
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white mb-3 sm:mb-4 uppercase tracking-wider">Ordered Items</h4>
+                    <div className="space-y-2 sm:space-y-3">
                       {order.items.map((item) => (
-                        <div key={item._id} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <span className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                        <div key={item._id} className="flex items-center justify-between p-2 sm:p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                            <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-[10px] sm:text-xs flex-shrink-0">
                               {item.quantity}x
                             </span>
-                            <span className="font-medium">{item.name}</span>
+                            <span className="font-medium text-xs sm:text-sm truncate">{item.name}</span>
                           </div>
-                          <span className="font-bold text-gray-600 dark:text-gray-300">
+                          <span className="font-bold text-gray-600 dark:text-gray-300 text-xs sm:text-sm flex-shrink-0 ml-2">
                             ${(item.price * item.quantity).toFixed(2)}
                           </span>
                         </div>

@@ -14,6 +14,13 @@ const app = express();
 if (process.env.NODE_ENV !== 'test') {
   connectDB();
 }
+// Middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production'
+    ? [process.env.FRONTEND_URL || 'https://emerald-weld.vercel.app', 'https://emerald-git-main-jabir-mahmuds-projects.vercel.app']
+    : '*'
+}));
+app.use(express.json());
 
 // Security Middleware
 app.use(helmet());
@@ -25,13 +32,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Middleware
-app.use(cors({ 
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://emerald-weld.vercel.app', 'https://emerald-git-main-jabir-mahmuds-projects.vercel.app']
-    : '*' 
-}));
-app.use(express.json());
+
 
 // Routes
 app.use('/api', routes);
