@@ -160,7 +160,7 @@ npm run seed
 ```
 
 This creates:
-- Admin user: `admin@example.com` / `admin123`
+- Admin user: `admin@example.com` / `password123`
 - 10 sample products across multiple categories
 
 ---
