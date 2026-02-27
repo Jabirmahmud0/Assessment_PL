@@ -12,6 +12,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
@@ -60,7 +61,23 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-white/70 dark:bg-charcoal/70 border-b border-emerald-500/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center">
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 mr-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-emerald-500 hover:bg-emerald-500/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500 transition-colors"
+            >
+              <span className="sr-only">Open main menu</span>
+              {mobileMenuOpen ? (
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
             <Link href="/" className="text-2xl font-bold text-emerald-700 dark:text-emerald-500">
               EMERALD
             </Link>
@@ -71,7 +88,7 @@ export default function Navbar() {
             <Link href="/products" className="hover:text-emerald-500 transition-colors">Products</Link>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {user && (
               <Link href="/cart" className="p-2 rounded-full hover:bg-emerald-500/10 transition-colors relative">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,10 +106,10 @@ export default function Navbar() {
             </button>
 
             {user ? (
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-emerald-500/10 transition-colors"
+                  className="flex items-center justify-center p-2 rounded-full hover:bg-emerald-500/10 transition-colors focus:outline-none"
                 >
                   {user.avatar ? (
                     <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
@@ -153,6 +170,28 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile menu, show/hide based on menu state. */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-charcoal border-b border-emerald-500/20">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              href="/products"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+            >
+              Products
+            </Link>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
